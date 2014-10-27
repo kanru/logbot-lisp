@@ -5,7 +5,13 @@
   :author "Kan-Ru Chen <kanru@kanru.info>"
   :licence "MIT/Expat"
   :description "IRC Logbot"
-  :depends-on ("cl-irc2" "sqlite" "usocket" "hunchentoot")
+  :depends-on ("cl-irc2"
+               "sqlite"
+               "usocket"
+               "hunchentoot"
+               "mustache"
+               "local-time"
+               "lass")
   :serial t
   :components ((:file "packages")
                (:file "db")
