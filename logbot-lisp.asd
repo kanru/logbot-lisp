@@ -10,7 +10,7 @@
                "sqlite"
                "usocket"
                "hunchentoot"
-               "mustache"
+               "cl-mustache"
                "local-time"
                "lass")
   :serial t
