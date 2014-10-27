@@ -310,7 +310,7 @@
               (hunchentoot:create-regex-dispatcher "^/channel/" (channel-view))
               (hunchentoot:create-regex-dispatcher "^/assets/screen.css$" #'screen-css-view))
         *webserver-acceptor*
-        (make-instance 'hunchentoot:easy-acceptor :port port)
+        (make-instance 'hunchentoot:easy-acceptor :address "127.0.0.1" :port port)
         *irclog-database*
         (database-open *database*))
   (hunchentoot:start *webserver-acceptor*))
