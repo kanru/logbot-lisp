@@ -39,6 +39,7 @@
 (defvar *bot-thread*)
 
 (defun start-bot ()
+  (initialize-database *database* *channels*)
   (run-webserver *webserver-port*)
   (setf *bot-thread*
         (bt:make-thread
