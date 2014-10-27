@@ -36,12 +36,19 @@
 (defparameter *port* 6667)
 (defparameter *channels* '("#emacs.tw" "#lisp.tw" "#cschat.tw"))
 (defparameter *webserver-port* 8000)
+(defvar *bot-thread*)
 
-(defun main ()
+(defun start-bot ()
   (run-webserver *webserver-port*)
-  (unwind-protect
-       (irc-logbot *database* *server* *port* *nick* *channels*)
-    (stop-webserver)))
+  (setf *bot-thread*
+        (bt:make-thread
+         (lambda ()
+           (irc-logbot *database* *server* *port* *nick* *channels*))
+         :name "Logbot-IRC")))
+
+(defun stop-bot ()
+  (bt:destroy-thread *bot-thread*)
+  (stop-webserver))
 
 
 ;;; runner.lisp ends here

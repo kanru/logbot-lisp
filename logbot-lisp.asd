@@ -6,6 +6,7 @@
   :licence "MIT/Expat"
   :description "IRC Logbot"
   :depends-on ("cl-irc2"
+               "bordeaux-threads"
                "sqlite"
                "usocket"
                "hunchentoot"
