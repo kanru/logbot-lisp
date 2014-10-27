@@ -50,12 +50,26 @@
            (irc:connect-run-main-loop client))
       (database-close db))))
 
+(defun ctcp-action-p (msg)
+  (let ((code001 (code-char 1)))
+    (and (char= code001 (char msg 0))
+         (char= code001 (char msg (1- (length msg))))
+         (= 1 (search "ACTION " msg :start2 1)))))
+
+(defun ctcp-action-message (msg)
+  (let ((start (length " ACTION "))
+        (end (1- (length msg))))
+    (subseq msg start end)))
+
 (defmethod irc:handle-message ((client logbot) (msg irc-message:privmsg))
-  (log-message (logbot-db client)
-               (first (irc-message:message-args msg))
-               (getf (irc-message:message-prefix msg) :nickname)
-               "PRIVMSG"
-               (second (irc-message:message-args msg))))
+  (let* ((msg (second (irc-message:message-args msg)))
+         (ctcp-action-p (ctcp-action-p msg))
+         (ctcp-message (if ctcp-action-p (ctcp-action-message msg) nil)))
+    (log-message (logbot-db client)
+                 (first (irc-message:message-args msg))
+                 (getf (irc-message:message-prefix msg) :nickname)
+                 (if ctcp-action-p "ACTION" "PRIVMSG")
+                 (if ctcp-action-p ctcp-message msg))))
 
 ;;; irc.lisp ends here
 

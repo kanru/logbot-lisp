@@ -30,14 +30,14 @@
 
 (in-package #:logbot)
 
-(defparameter *database*)
-(defparameter *nick*)
+(defparameter *database* #P"irclog.sqlite")
+(defparameter *nick* "bibot")
 (defparameter *server* "irc.freenode.net")
 (defparameter *port* 6667)
-(defparameter *channels*)
+(defparameter *channels* '("#emacs.tw" "#lisp.tw" "#cschat.tw"))
 
 (defun main ()
-  (irc-logbot #P"log.sqlite" *server* *port* *nick* *channels*))
+  (irc-logbot *database* *server* *port* *nick* *channels*))
 
 
 ;;; runner.lisp ends here
