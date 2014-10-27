@@ -48,26 +48,29 @@
     (unwind-protect
          (irc:with-connection (conn)
            (irc:connect-run-main-loop client))
-      (database-close db))))
+      (database-close db)
+      (usocket:socket-close usocket))))
 
 (defun ctcp-action-p (msg)
-  (let ((code001 (code-char 1)))
-    (and (char= code001 (char msg 0))
-         (char= code001 (char msg (1- (length msg))))
-         (= 1 (search "ACTION " msg :start2 1)))))
+  (when msg
+    (let ((code001 (code-char 1)))
+      (and (char= code001 (char msg 0))
+           (char= code001 (char msg (1- (length msg))))
+           (= 1 (search "ACTION " msg :start2 1))))))
 
 (defun ctcp-action-message (msg)
-  (let ((start (length " ACTION "))
-        (end (1- (length msg))))
-    (subseq msg start end)))
+  (when msg
+    (let ((start (length " ACTION "))
+          (end (1- (length msg))))
+      (subseq msg start end))))
 
-(defmethod irc:handle-message ((client logbot) (msg irc-message:privmsg))
-  (let* ((msg (second (irc-message:message-args msg)))
+(defmethod irc:handle-message ((client logbot) (privmsg irc-message:privmsg))
+  (let* ((msg (second (irc-message:message-args privmsg)))
          (ctcp-action-p (ctcp-action-p msg))
          (ctcp-message (if ctcp-action-p (ctcp-action-message msg) nil)))
     (log-message (logbot-db client)
-                 (first (irc-message:message-args msg))
-                 (getf (irc-message:message-prefix msg) :nickname)
+                 (first (irc-message:message-args privmsg))
+                 (getf (irc-message:message-prefix privmsg) :nickname)
                  (if ctcp-action-p "ACTION" "PRIVMSG")
                  (if ctcp-action-p ctcp-message msg))))
 
