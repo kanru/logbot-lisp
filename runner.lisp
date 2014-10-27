@@ -35,9 +35,13 @@
 (defparameter *server* "irc.freenode.net")
 (defparameter *port* 6667)
 (defparameter *channels* '("#emacs.tw" "#lisp.tw" "#cschat.tw"))
+(defparameter *webserver-port* 8000)
 
 (defun main ()
-  (irc-logbot *database* *server* *port* *nick* *channels*))
+  (run-webserver *webserver-port*)
+  (unwind-protect
+       (irc-logbot *database* *server* *port* *nick* *channels*)
+    (stop-webserver)))
 
 
 ;;; runner.lisp ends here
