@@ -95,9 +95,11 @@
 (defun messages-context (messages)
   (loop :for (datetime nick action msg) :in messages
         :collect `((:time . ,(format-time datetime))
-                   (:nick . ,nick)
+                   (:nick . ,(if (string= action "ACTION") "*" nick))
                    (:action . ,action)
-                   (:msg . ,msg))))
+                   (:msg . ,(if (string= action "ACTION")
+                                (format nil "~a ~a" nick msg)
+                                msg)))))
 
 (mustache:define render-channel-date-view
   "<!DOCTYPE html>
@@ -109,6 +111,9 @@
     <link rel=\"styleshee\" type=\"text/css\" href=\"http://fonts.googleapis.com/css?family=Droid+Sans+Mono\">
     <base target=\"_blank\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>
+    <script>
+      window.setTimeout(function() { location.reload(); }, 60000);
+    </script>
   </head>
   <body>
     <div class=\"wrapper\">
@@ -123,6 +128,7 @@
       -->
       <div class=\"body\">
         <div class=\"channel\">{{channel}}</div>
+        <div class=\"date\">{{start-date-time}}</div>
         
         <!--<div class=\"scroll_switch\">AUTO⬇ </div>-->
        
@@ -217,18 +223,14 @@
         :font-weight bold
         :padding 5px 10px)
        (.date
-        :width 7.2em
-        :height 30px
-        :background transparent "url('images/img_dropdown_violet.svg')" no-repeat 6em 60%
         :background-size 10%
         :color ,violet
-        :letter-spacing -2px
         :border none
-        :padding 0 10px
+        :padding 5px 10px
         :outline none
         :appearance none)
        ((:and .date "::after")
-        :content "'\25BE'")
+        :content ,(format nil "'~c'" (code-char #x25BE)))
        (.scroll_switch
         :float right
         :clear both
