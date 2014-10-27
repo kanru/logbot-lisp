@@ -159,6 +159,10 @@
 
 (defun screen-css-view ()
   (setf (hunchentoot:content-type*) "text/css")
+  (setf (hunchentoot:header-out :expires)
+        (hunchentoot:rfc-1123-date
+         (+ (get-universal-time) 120)))
+  (setf (hunchentoot:header-out :cache-control) "max-age=120")
   (let ((base03 "#002b36")
         (base02 "#073642")
         (base01 "#586e75")
