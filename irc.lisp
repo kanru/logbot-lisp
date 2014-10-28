@@ -56,7 +56,7 @@
     (let ((code001 (code-char 1)))
       (and (char= code001 (char msg 0))
            (char= code001 (char msg (1- (length msg))))
-           (= 1 (search "ACTION " msg :start2 1))))))
+           (= 7 (mismatch "ACTION " msg :start2 1))))))
 
 (defun ctcp-action-message (msg)
   (when msg
