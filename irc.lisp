@@ -69,15 +69,14 @@
   (let ((chl (first (irc-message:message-args privmsg)))
         (msg (second (irc-message:message-args privmsg)))
         (nik (getf (irc-message:message-prefix privmsg) :nickname)))
-    (let ((sandbox:*sandbox* (format nil "SANDBOX/~a/~a" chl nik)))
-      (with-output-to-string (datum)
-        (handler-case
-            (bt:with-timeout (1)
-              (sandbox:read-eval-print (subseq msg 1) datum))
-          (bt:timeout () (write-line ";; TIMEOUT" datum)))
-        (irc:send-message 'irc-message:privmsg chl
-                          (string-trim '(#\Newline)
-                                       (get-output-stream-string datum)))))))
+    (let* ((sandbox:*sandbox* (format nil "SANDBOX/~a/~a" chl nik))
+           (output (with-output-to-string (datum)
+                     (handler-case
+                         (bt:with-timeout (1)
+                           (sandbox:read-eval-print (subseq msg 1) datum))
+                       (bt:timeout () (write-line ";; TIMEOUT" datum))))))
+      (irc:send-message 'irc-message:privmsg chl (string-trim '(#\Newline) output))
+      output)))
 
 (defmethod irc:handle-message ((client logbot) (privmsg irc-message:privmsg))
   (let* ((msg (second (irc-message:message-args privmsg)))
