@@ -34,7 +34,7 @@
 (defparameter *nick* "bibot")
 (defparameter *server* "irc.freenode.net")
 (defparameter *port* 6667)
-(defparameter *channels* '("#emacs.tw" "#lisp.tw" "#cschat.tw"))
+(defparameter *channels* '("#h4" "#emacs.tw" "#lisp.tw" "#cschat.tw"))
 (defparameter *webserver-port* 8000)
 (defvar *bot-thread*)
 
