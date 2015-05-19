@@ -35,21 +35,22 @@
         :accessor logbot-db)))
 
 (defun irc-logbot (pathname server port nick channels)
-  (let* ((usocket (usocket:socket-connect server port))
-         (stream (usocket:socket-stream usocket))
-         (conn (irc:make-connection stream))
-         (db (database-open pathname))
-         (client (make-instance 'logbot
-                                :nick nick
-                                :user "logbot"
-                                :realname "Logbot-Lisp"
-                                :channels channels
-                                :database db)))
-    (unwind-protect
-         (irc:with-connection (conn)
-           (irc:connect-run-main-loop client))
-      (database-close db)
-      (usocket:socket-close usocket))))
+  (loop
+    (let* ((usocket (usocket:socket-connect server port))
+           (stream (usocket:socket-stream usocket))
+           (conn (irc:make-connection stream))
+           (db (database-open pathname))
+           (client (make-instance 'logbot
+                                  :nick nick
+                                  :user "logbot"
+                                  :realname "Logbot-Lisp"
+                                  :channels channels
+                                  :database db)))
+      (unwind-protect
+           (irc:with-connection (conn)
+             (irc:connect-run-main-loop client))
+        (database-close db)
+        (usocket:socket-close usocket)))))
 
 (defun ctcp-action-p (msg)
   (when msg
