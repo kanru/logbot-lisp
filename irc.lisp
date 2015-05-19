@@ -64,15 +64,33 @@
           (end (1- (length msg))))
       (subseq msg start end))))
 
+(defun try-sandbox-repl (privmsg)
+  (let ((chl (first (irc-message:message-args privmsg)))
+        (msg (second (irc-message:message-args privmsg)))
+        (nik (getf (irc-message:message-prefix privmsg) :nickname)))
+    (let ((sandbox:*sandbox* (format nil "SANDBOX/~a/~a" chl nik)))
+      (with-output-to-string (datum)
+        (handler-case
+            (bt:with-timeout (1)
+              (sandbox:read-eval-print (subseq msg 1) datum))
+          (bt:timeout () (write-line ";; TIMEOUT" datum)))
+        (irc:send-message 'irc-message:privmsg chl
+                          (string-trim '(#\Newline)
+                                       (get-output-stream-string datum))))))
+
 (defmethod irc:handle-message ((client logbot) (privmsg irc-message:privmsg))
   (let* ((msg (second (irc-message:message-args privmsg)))
+         (chl (first (irc-message:message-args privmsg)))
+         (nik (getf (irc-message:message-prefix privmsg) :nickname))
          (ctcp-action-p (ctcp-action-p msg))
          (ctcp-message (if ctcp-action-p (ctcp-action-message msg) nil)))
-    (log-message (logbot-db client)
-                 (first (irc-message:message-args privmsg))
-                 (getf (irc-message:message-prefix privmsg) :nickname)
+    (log-message (logbot-db client) chl nik
                  (if ctcp-action-p "ACTION" "PRIVMSG")
-                 (if ctcp-action-p ctcp-message msg))))
+                 (if ctcp-action-p ctcp-message msg))
+    (when (and (not ctcp-action-p)
+               (string= "," msg :end2 1))
+      (log-message (logbot-db client) chl (irc:client-nick client)
+                   (try-sandbox-repl privmsg)))))
 
 ;;; irc.lisp ends here
 

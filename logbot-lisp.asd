@@ -12,7 +12,8 @@
                "hunchentoot"
                "cl-mustache"
                "local-time"
-               "lass")
+               "lass"
+               "sandbox")
   :serial t
   :components ((:file "packages")
                (:file "db")
