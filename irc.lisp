@@ -90,7 +90,7 @@
                  (if ctcp-action-p ctcp-message msg))
     (when (and (not ctcp-action-p)
                (string= "," msg :end2 1))
-      (log-message (logbot-db client) chl (irc:client-nick client)
+      (log-message (logbot-db client) chl (irc:client-nick client) "PRIVMSG"
                    (try-sandbox-repl privmsg)))))
 
 ;;; irc.lisp ends here
