@@ -77,7 +77,7 @@
           (bt:timeout () (write-line ";; TIMEOUT" datum)))
         (irc:send-message 'irc-message:privmsg chl
                           (string-trim '(#\Newline)
-                                       (get-output-stream-string datum))))))
+                                       (get-output-stream-string datum)))))))
 
 (defmethod irc:handle-message ((client logbot) (privmsg irc-message:privmsg))
   (let* ((msg (second (irc-message:message-args privmsg)))
