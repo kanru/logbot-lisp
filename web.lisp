@@ -247,9 +247,7 @@
         :list-style-type none
         :font-family "Droid Sans Mono" monospace
         :margin 0 10px
-        (li :margin-top 12px
-            :line-height 1.33
-            ((:or .time .nick)
+        (li ((:or .time .nick)
              :float left)
             ((:or .time .nick .msg)
              :display block)
@@ -268,7 +266,9 @@
              :margin-left 200px
              (.nick
               :width auto
-              :margin-left 0px)))
+              :margin-left 0px))
+            :margin-top 12px
+            :line-height 1.33)
         ((:and li .new-arrival)
          :animation blank 500ms ease-out)))
      `(.wordwrap
