@@ -47,8 +47,9 @@
                                   :channels channels
                                   :database db)))
       (unwind-protect
-           (irc:with-connection (conn)
-             (irc:connect-run-main-loop client))
+           (ignore-errors
+            (irc:with-connection (conn)
+              (irc:connect-run-main-loop client)))
         (database-close db)
         (usocket:socket-close usocket)))))
 
