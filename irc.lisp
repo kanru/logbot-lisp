@@ -70,7 +70,7 @@
   (let ((chl (first (irc-message:message-args privmsg)))
         (msg (second (irc-message:message-args privmsg)))
         (nik (getf (irc-message:message-prefix privmsg) :nickname)))
-    (let* ((sandbox:*sandbox* (format nil "SANDBOX/~a/~a" chl nik))
+    (let* ((sandbox:*sandbox* (format nil "SANDBOX/~a" nik))
            (output (with-output-to-string (datum)
                      (handler-case
                          (bt:with-timeout (1)
