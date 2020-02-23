@@ -13,7 +13,7 @@
                "cl-mustache"
                "local-time"
                "lass"
-               "sandbox")
+               "isolated")
   :serial t
   :components ((:file "packages")
                (:file "db")
